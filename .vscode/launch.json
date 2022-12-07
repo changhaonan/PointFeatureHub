@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Eval Test",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/external/pytorch-superpoint/evaluation.py",
+            "args": [
+                "/home/robot-learning/Projects/PointFeatureHub/external/pytorch-superpoint/logs/superpoint_hpatches_test/predictions",
+                "--repeatibility",
+                "--homography",
+                "--outputImg",
+                "--plotMatching"
+            ],
+            "cwd": "${workspaceFolder}/external/pytorch-superpoint",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Eval Export",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/external/pytorch-superpoint/export.py",
+            "args": [
+                "export_descriptor",
+                "configs/magicpoint_repeatability_heatmap.yaml",
+                "superpoint_hpatches_test",
+                "--eval"
+            ],
+            "cwd": "${workspaceFolder}/external/pytorch-superpoint",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
+    ]
+}
