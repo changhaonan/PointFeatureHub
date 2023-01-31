@@ -5,6 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Superpoint Inference",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/external/SuperGluePretrainedNetwork/superpoint_inference.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--input /home/lance/ws_Yuqiu/OurDataset/wrap_test_use/masked_rgb",
+                "--output_dir /home/lance/ws_Yuqiu/OurDataset/wrap_test_use/features"
+            ],
+            "justMyCode": false
+        },
+        {
             "name": "Eval Test",
             "type": "python",
             "request": "launch",
