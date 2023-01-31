@@ -4,3 +4,6 @@
 [submodule "external/r2d2"]
 	path = external/r2d2
 	url = git@github.com:YuqiuGan/r2d2.git
+[submodule "external/SuperGluePretrainedNetwork"]
+	path = external/SuperGluePretrainedNetwork
+	url = git@yuqiugan.github.com:YuqiuGan/SuperGluePretrainedNetwork.git

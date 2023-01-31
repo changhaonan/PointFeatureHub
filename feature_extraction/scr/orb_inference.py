@@ -54,13 +54,13 @@ def orb_inference(img_dir):
     img_list = os.listdir(img_dir)
     img_list.sort()
     orb_dir = img_dir.replace("masked_rgb", "features")
-    orb_dir = os.path.join(orb_dir, "orb")
+    orb_dir = os.path.join(orb_dir, "orb_results")
     if not os.path.exists(orb_dir):
         os.mkdir(orb_dir)
     for i in tqdm(range(len(img_list))):
         img_name = img_list[i]
         if img_name.endswith('png'):
-            FName = os.path.join(orb_dir, img_name.replace("masked", "feature").replace("png", "xml"))
+            FName = os.path.join(orb_dir, img_name.replace("masked", "orb").replace("png", "xml"))
             img = cv2.imread(os.path.join(img_dir, img_name))
             kp, des = orb_detect(img)
             write_xml_orb(kp, des, FName)
@@ -68,7 +68,7 @@ def orb_inference(img_dir):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="SuperPoint Inference")
+    parser = argparse.ArgumentParser(description="ORB Inference")
     parser.add_argument(
         "-i", "--image_dir",
         dest = "image_dir",
