@@ -8,17 +8,17 @@ do
 done
 
 ### variables
-scr_dir="./scr"
 rgb_dir=$img_dir"/rgb"
 seg_dir=$img_dir"/seg"
 cam_dir=$img_dir"/cam-00"
 feature_dir=$img_dir"/features"
 masked_rgb_dir=$img_dir"/masked_rgb"
 main_dir=$(pwd)
-r2d2_results_dir=$img_dir"/r2d2_results"
-r2d2_src="../external/r2d2/extract.py"
-r2d2_model="../external/r2d2/models/r2d2_WASF_N16.pt"
-img_list=$rgb_dir"/img_list.txt"
+r2d2_results_dir=$feature_dir"/r2d2_results"
+r2d2_ws="../external/r2d2"
+# r2d2_src="/home/lance/ws_Yuqiu/r2d2/extract.py"
+# r2d2_model="/home/lance/ws_Yuqiu/r2d2/models/r2d2_WASF_N16.pt"
+img_list=$masked_rgb_dir"/img_list.txt"
 ###
 
 ### Create working directories
@@ -43,18 +43,17 @@ eval "$(conda shell.bash hook)"
 conda activate r2d2;
 echo "Conda env activated: $CONDA_DEFAULT_ENV ...";
 echo "Creating masked RGB images ..."
-python "$scr_dir/create_masked_rgb.py" -d "$rgb_dir";
+python "./scr/create_masked_rgb.py" -d "$rgb_dir";
 ###
 
 ### R2D2
 conda activate r2d2;
 echo "Conda env activated: $CONDA_DEFAULT_ENV ...";
-python "$scr_dir/create_imglist.py" -d "$rgb_dir";
+python "./scr/create_imglist.py" -d "$masked_rgb_dir";
 echo "Executing R2D2 ..."
-python "$r2d2_src" --model "$r2d2_model" --images "$img_list" --top-k 5000
+python "$r2d2_ws/extract.py" --model "$r2d2_ws/models/r2d2_WASF_N16.pt" --images "$img_list" --top-k 1000
 echo "R2D2 model executed ..."
-mv "$rgb_dir/"*.r2d2 "$r2d2_results_dir";
-conda deactivate;
+mv "$masked_rgb_dir/"*.r2d2 "$r2d2_results_dir";
 for i in "$r2d2_results_dir/"*.r2d2
 do
 mkdir -p "${i/.r2d2//}"
@@ -62,7 +61,9 @@ unzip "$i" -d "${i/.r2d2//}"
 echo "Unzipped to ${i/.r2d2//}"
 done
 rm "$r2d2_results_dir/"*.r2d2
+rm $img_list
 echo "Unzip r2d2 results done ..."
+python "./scr/orb_inference.py" -i "$img_dir"
+conda deactivate;
+rm -r "$r2d2_results_dir/"*.png
 ###
-
-
