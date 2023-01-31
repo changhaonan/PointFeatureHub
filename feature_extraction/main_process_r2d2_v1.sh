@@ -61,9 +61,9 @@ unzip "$i" -d "${i/.r2d2//}"
 echo "Unzipped to ${i/.r2d2//}"
 done
 rm "$r2d2_results_dir/"*.r2d2
-rm $img_list
+rm "$img_list"
 echo "Unzip r2d2 results done ..."
-python "./scr/orb_inference.py" -i "$img_dir"
+python "./scr/r2d2_inference.py" -i "$img_dir"
 conda deactivate;
 rm -r "$r2d2_results_dir/"*.png
 ###
