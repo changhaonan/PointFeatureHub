@@ -1,0 +1,3 @@
+work_dir: ${hydra:runtime.cwd}
+data_dir: ${work_dir}/data
+print_config: true

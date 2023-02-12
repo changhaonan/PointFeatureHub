@@ -1,0 +1,5 @@
+# @package _global_
+
+type: detect
+task_name: sift_detector
+suffix: ""
