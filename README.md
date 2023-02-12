@@ -4,6 +4,24 @@ This works intends to compare the result from the different pointfeature source 
 
 Currently included:
 
+## Decteting method:
+
 - SuperPoint
 - R2D2
-- SIFT
+- OpenCV-based
+    - ORB
+    - SIFT
+- Detector-Free
+    - LoFTR from kernia
+
+## Matching method:
+
+- SuperGLUE
+- OpenCV: BF-matcher
+- AdaLAM from kernia
+
+## Architecture
+
+The current architecture we used is based ZMQ socket. The reason why we should this is because this can help us to integrate different conda environment, python and c++. Make the whole structure easy to use. 
+
+We also provide python and C++ wrapper to integrate with your own projects.
