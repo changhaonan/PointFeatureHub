@@ -1,3 +1,0 @@
-[submodule "external/pytorch-superpoint"]
-	path = external/pytorch-superpoint
-	url = git@github.com:changhaonan/pytorch-superpoint.git
