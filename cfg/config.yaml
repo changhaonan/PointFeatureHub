@@ -2,15 +2,8 @@
 
 # specify here default training configuration
 defaults:
-    - trainer: null
-    - model: null 
-    - datamodule: null
-    - callbacks: null  # set this to null if you don't want to use callbacks
-    - logger: null  # set logger here or use command line (e.g. `python train.py logger=wandb`)
-
-    # enable color logging
-    # - override hydra/hydra_logging: colorlog
-    # - override hydra/job_logging: colorlog
+    - detect: sift
+    - match: bf
 
 
 # path to original working directory (that `train.py` was executed from in command line)
@@ -22,10 +15,19 @@ work_dir: ${hydra:runtime.cwd}
 
 # path to folder with data
 data_dir: ${work_dir}/data
-
+train_dir: test_0
+query_dir: test_0
 
 # pretty print config at the start of the run using Rich library
 print_config: True
+
+# default set
+task: detect
+
+# visualize
+draw_keypoints: True
+save_image: False
+save_path: ${work_dir}/log
 
 hydra:
     run:

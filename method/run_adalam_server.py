@@ -9,6 +9,11 @@ import kornia.feature as KF
 import torch
 from kornia_moons.feature import *
 
+# add import path
+import sys
+sys.path.append("../")
+from utils.decorator import DetectorServer
+
 
 def to_torch_image(frame):
     img = K.image_to_tensor(frame).float() / 255.0

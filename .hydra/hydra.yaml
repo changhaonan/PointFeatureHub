@@ -111,11 +111,13 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=RUN
-    task: []
+    task:
+    - task=detect
+    - detect=sift
   job:
     name: run
     chdir: null
-    override_dirname: ''
+    override_dirname: detect=sift,task=detect
     id: ???
     num: ???
     config_name: config
@@ -142,11 +144,8 @@ hydra:
       provider: schema
     output_dir: /home/robot-learning/Projects/PointFeatureHub
     choices:
-      logger: null
-      callbacks: null
-      datamodule: null
-      model: null
-      trainer: null
+      match: bf
+      detect: sift
       hydra/env: default
       hydra/callbacks: null
       hydra/job_logging: default

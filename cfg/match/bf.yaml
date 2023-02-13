@@ -1,4 +1,4 @@
 # @package _global_
 
-type: match
-task_name: bf_match
+matcher: bf
+matcher_port: 8080  # port where it publish the matching result

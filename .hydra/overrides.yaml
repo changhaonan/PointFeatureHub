@@ -1,1 +1,2 @@
-[]
+- task=detect
+- detect=sift

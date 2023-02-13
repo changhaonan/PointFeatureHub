@@ -1,3 +1,17 @@
+detector: sift
+device: cpu
+dim_feature: 32
+max_feature: 500
+thresh_confid: 0.7
+detector_port: 9090
+matcher: bf
+matcher_port: 8080
 work_dir: ${hydra:runtime.cwd}
 data_dir: ${work_dir}/data
+train_dir: test_0
+query_dir: test_0
 print_config: true
+task: detect
+draw_keypoints: true
+save_image: false
+save_path: ${work_dir}/log
