@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/run.py",
             "args": [
                 "task=detect",
-                "detect=orb",
+                "detect=r2d2",
             ],
             "console": "integratedTerminal",
             "justMyCode": true

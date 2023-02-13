@@ -21,7 +21,7 @@ class SIFTDetector(Detector):
     def detect(self, image):
         # detect keypoints/descriptors for a single image
         kpts, desc = self.sift.detectAndCompute(image, None)
-        xys = np.array([k.pt for k in kpts])
+        xys = np.array([[k.pt[0], k.pt[1], k.size] for k in kpts])
         scores = np.array([k.response for k in kpts])
         idxs = scores.argsort()[-self.max_feature or None :]
         if len(idxs) == 0:

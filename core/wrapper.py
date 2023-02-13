@@ -75,7 +75,7 @@ class DrawKeyPointsWrapper(DetectorWrapper):
         # draw keypoints with colormap using scores
         vis_image = cv2.drawKeypoints(
             vis_image,
-            [cv2.KeyPoint(x * scale, y * scale, 1) for x, y in xys],
+            [cv2.KeyPoint(x * scale, y * scale, 1) for x, y, s in xys],
             vis_image,
             flags=0,
         )

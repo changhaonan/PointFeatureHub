@@ -23,7 +23,7 @@ class Detector(ABC):
         Args:
             image (np.ndarray): image to be detected.
         Returns:
-            xys (np.ndarray): keypoints' coordinates.
+            xys (np.ndarray): keypoints' coordinates and size.
             desc (np.ndarray): descriptors.
             scores (np.ndarray): scores of keypoints.
         """
