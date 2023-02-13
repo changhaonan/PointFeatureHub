@@ -113,11 +113,11 @@ hydra:
     - hydra.mode=RUN
     task:
     - task=detect
-    - detect=r2d2
+    - detect=super_point
   job:
     name: run
     chdir: null
-    override_dirname: detect=r2d2,task=detect
+    override_dirname: detect=super_point,task=detect
     id: ???
     num: ???
     config_name: config
@@ -145,7 +145,7 @@ hydra:
     output_dir: /home/robot-learning/Projects/PointFeatureHub
     choices:
       match: bf
-      detect: r2d2
+      detect: super_point
       hydra/env: default
       hydra/callbacks: null
       hydra/job_logging: default
