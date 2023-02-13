@@ -9,9 +9,10 @@ from core.wrapper import DrawKeyPointsWrapper, SaveImageWrapper
 @hydra.main(config_path="cfg", config_name="config")
 def launch_detector_hydra(cfg):
     def create_detector_thunk(**kwargs):
-        detector = detector_map[cfg.detector](cfg, **kwargs)
+        detector = detector_map[cfg.detector](cfg, cfg.device, **kwargs)
         if cfg.draw_keypoints:
-            detector = DrawKeyPointsWrapper(detector)
+            window_name = f"{cfg.task}:{cfg.detector}"
+            detector = DrawKeyPointsWrapper(detector, window_name=window_name)
             if cfg.save_image:
                 detector = SaveImageWrapper(
                     detector,

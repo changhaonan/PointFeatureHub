@@ -1,4 +1,4 @@
-detector: sift
+detector: orb
 device: cpu
 dim_feature: 32
 max_feature: 500
