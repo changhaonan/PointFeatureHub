@@ -12,6 +12,21 @@
             "args": [
                 "task=detect",
                 "detect=super_point",
+                "draw_keypoints=true"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "matcher",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "args": [
+                "task=match",
+                "detect=super_point",
+                "match=bf",
+                "draw_matches=true"
             ],
             "console": "integratedTerminal",
             "justMyCode": true

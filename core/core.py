@@ -34,7 +34,7 @@ class Detector(ABC):
         """Completely unwrap this env.
 
         Returns:
-            gym.Env: The base non-wrapped gym.Env instance
+            Detector: The base Detector instance
         """
         return self
 
@@ -90,3 +90,101 @@ class DetectorWrapper(Detector):
     @property
     def unwrapped(self):
         return self.detector.unwrapped
+
+
+class Matcher(ABC):
+    """Abstract class for matcher."""
+
+    # Set this in SOME subclasses
+    metadata = {}
+
+    # Set this in ALL subclasses
+    device = None
+    dim_feature = None  # dimension of the feature
+    max_feature = None  # maximum number of features in an image
+    thresh_confid = None  # threshold of the feature confidence
+
+    @abc.abstractmethod
+    def match(
+        self, image1, image2, xys1, xys2, desc1, desc2, score1, score2
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        """Match keypoints and descriptors from two images.
+        Args:
+            image1 (np.ndarray): image1 to be matched.
+            image2 (np.ndarray): image2 to be matched.
+            xys1 (np.ndarray): keypoints' coordinates and size of image1.
+            xys2 (np.ndarray): keypoints' coordinates and size of image2.
+            desc1 (np.ndarray): descriptors of image1.
+            desc2 (np.ndarray): descriptors of image2.
+            scores1 (np.ndarray): scores of keypoints of image1.
+            scores2 (np.ndarray): scores of keypoints of image2.
+        Returns:
+            matches1to2 (np.ndarray): matches of keypoints. (-1 means no match).
+            confidences (np.ndarray): confidences of matches.
+            vis_image (np.ndarray): visualization image.
+        """
+        raise NotImplementedError
+
+    @property
+    def unwrapped(self):
+        """Completely unwrap this env.
+
+        Returns:
+            gym.Env: The base Matcher instance
+        """
+        return self
+
+
+class MatcherWrapper(Matcher):
+    def __init__(self, matcher):
+        self.matcher = matcher
+
+        self._dim_feature = None
+        self._max_feature = None
+        self._thresh_confid = None
+
+    def __getattr__(self, name):
+        if name.startswith("_"):
+            raise AttributeError(
+                "attempted to get missing private attribute '{}'".format(name)
+            )
+        return getattr(self.env, name)
+
+    @property
+    def dim_feature(self):
+        if self._dim_feature is None:
+            return self.matcher.dim_feature
+        return self._dim_feature
+
+    @dim_feature.setter
+    def dim_feature(self, value):
+        self._dim_feature = value
+
+    @property
+    def max_feature(self):
+        if self._max_feature is None:
+            return self.matcher.max_feature
+        return self._max_feature
+
+    @max_feature.setter
+    def max_feature(self, value):
+        self._max_feature = value
+
+    @property
+    def thresh_confid(self):
+        if self._thresh_confid is None:
+            return self.matcher.thresh_confid
+        return self._thresh_confid
+
+    @thresh_confid.setter
+    def thresh_confid(self, value):
+        self._thresh_confid = value
+
+    def match(self, image1, image2, xys1, xys2, desc1, desc2, score1, score2):
+        return self.matcher.match(
+            image1, image2, xys1, xys2, desc1, desc2, score1, score2
+        )
+
+    @property
+    def unwrapped(self):
+        return self.matcher.unwrapped

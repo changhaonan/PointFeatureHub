@@ -1,10 +1,12 @@
 import cv2
 import os
-from core.core import Detector, DetectorWrapper
+from core.core import Detector, DetectorWrapper, Matcher, MatcherWrapper
 import numpy as np
+import matplotlib.cm as cm
+from third_party.utils import make_matching_plot_fast
 
 
-class SaveImageWrapper(DetectorWrapper):
+class SaveImageDetectorWrapper(DetectorWrapper):
     """Save detected image to a file"""
 
     def __init__(
@@ -16,7 +18,7 @@ class SaveImageWrapper(DetectorWrapper):
         padding_zeros: int = 4,
         verbose: bool = False,
     ):
-        super(SaveImageWrapper, self).__init__(detector)
+        super(SaveImageDetectorWrapper, self).__init__(detector)
         self.save_dir = save_dir
         self.prefix = prefix
         self.suffix = suffix
@@ -34,10 +36,10 @@ class SaveImageWrapper(DetectorWrapper):
         # detect keypoints/descriptors for a single image
         xys, desc, scores, vis_image = self.detector.detect(image)
         # save image
-        self.save_image(image)
+        self.save(image)
         return xys, desc, scores, vis_image
 
-    def save_image(self, image):
+    def save(self, image):
         # save image
         filename = os.path.join(
             self.save_dir,
@@ -51,11 +53,11 @@ class SaveImageWrapper(DetectorWrapper):
         self.counter += 1
 
 
-class DrawKeyPointsWrapper(DetectorWrapper):
+class DrawKeyPointsDetectorWrapper(DetectorWrapper):
     """Draw keypoints on image and visualize it"""
 
     def __init__(self, detector, window_name: str = "image", vis_height=500, show=True):
-        super(DrawKeyPointsWrapper, self).__init__(detector)
+        super(DrawKeyPointsDetectorWrapper, self).__init__(detector)
         self.window_name = window_name
         self.vis_height = vis_height
         self.show = show
@@ -64,10 +66,10 @@ class DrawKeyPointsWrapper(DetectorWrapper):
         # detect keypoints/descriptors for a single image
         xys, desc, scores, vis_image = self.detector.detect(image)
         # visualize image
-        vis_image = self.vis_image(image, xys, scores)
+        vis_image = self.vis(image, xys, scores)
         return xys, desc, scores, vis_image
 
-    def vis_image(self, image, xys, scores):
+    def vis(self, image, xys, scores):
         vis_image = image.copy()
         # resize image height to 500
         scale = self.vis_height / vis_image.shape[0]
@@ -80,6 +82,104 @@ class DrawKeyPointsWrapper(DetectorWrapper):
             flags=0,
         )
         # visualize image
+        if self.show:
+            cv2.imshow(self.window_name, vis_image)
+            cv2.waitKey(0)
+        return vis_image
+
+
+class SaveImageMatcherWrapper(MatcherWrapper):
+    """Save detected image to a file"""
+
+    def __init__(
+        self,
+        matcher,
+        save_dir: str,
+        prefix: str = "image",
+        suffix: str = "png",
+        padding_zeros: int = 4,
+        verbose: bool = False,
+    ):
+        super(SaveImageMatcherWrapper, self).__init__(matcher)
+        self.save_dir = save_dir
+        self.prefix = prefix
+        self.suffix = suffix
+        self.verbose = verbose
+        self.padding_zeros = padding_zeros
+
+        # clean up the save_dir
+        if os.path.exists(self.save_dir):
+            os.system("rm -rf {}".format(self.save_dir))
+        os.makedirs(self.save_dir)
+        # counter for image
+        self.counter = 0
+
+    def match(self, image1, image2, xys1, xys2, desc1, desc2, score1, score2):
+        # do match
+        matches1to2, confidence, vis_image = self.matcher.match(
+            image1, image2, xys1, xys2, desc1, desc2, score1, score2
+        )
+        # save image
+        self.save(vis_image)
+        return matches1to2, confidence, vis_image
+
+    def save(self, image):
+        # save image
+        filename = os.path.join(
+            self.save_dir,
+            "{}_{}.{}".format(
+                self.prefix, str(self.counter).zfill(self.padding_zeros), self.suffix
+            ),
+        )
+        cv2.imwrite(filename, image)
+        if self.verbose:
+            print("Save image to {}".format(filename))
+        self.counter += 1
+
+
+class DrawKeyPointsMatcherWrapper(MatcherWrapper):
+    """Draw keypoints & matching lines on image and visualize it"""
+
+    def __init__(self, matcher, window_name: str = "image", vis_height=500, show=True):
+        super(DrawKeyPointsMatcherWrapper, self).__init__(matcher)
+        self.window_name = window_name
+        self.vis_height = vis_height
+        self.show = show
+
+    def match(self, image1, image2, xys1, xys2, desc1, desc2, score1, score2):
+        # detect keypoints/descriptors for a single image
+        matches1to2, confidence, _ = self.matcher.match(
+            image1, image2, xys1, xys2, desc1, desc2, score1, score2
+        )
+        # visualize image
+        vis_image = self.vis(image1, image2, xys1, xys2, matches1to2, confidence)
+        return matches1to2, confidence, vis_image
+
+    def vis(self, image1, image2, xys1, xys2, matches, confidence):
+        image1_gray = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+        image2_gray = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+        xys_1_valid = xys1[matches[:, 0]]
+        xys_2_valid = xys2[matches[:, 1]]
+        color = cm.jet(confidence)
+        text = [
+            "Keypoints: {}:{}".format(len(xys1), len(xys2)),
+            "Matches: {}".format(len(xys_1_valid)),
+        ]
+
+        # visualize matches
+        vis_image = make_matching_plot_fast(
+            image1_gray,
+            image2_gray,
+            xys1[:, :2],
+            xys2[:, :2],
+            xys_1_valid[:, :2],
+            xys_2_valid[:, :2],
+            color,
+            text,
+            path=None,
+            show_keypoints=True,
+        )
+
         if self.show:
             cv2.imshow(self.window_name, vis_image)
             cv2.waitKey(0)

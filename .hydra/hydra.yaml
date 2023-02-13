@@ -112,12 +112,14 @@ hydra:
     hydra:
     - hydra.mode=RUN
     task:
-    - task=detect
+    - task=match
     - detect=super_point
+    - match=bf
+    - draw_matches=true
   job:
     name: run
     chdir: null
-    override_dirname: detect=super_point,task=detect
+    override_dirname: detect=super_point,draw_matches=true,match=bf,task=match
     id: ???
     num: ???
     config_name: config

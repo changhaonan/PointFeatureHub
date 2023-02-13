@@ -16,7 +16,8 @@ data_dir: ${work_dir}/data
 train_dir: test_0
 query_dir: test_0
 print_config: true
-task: detect
-draw_keypoints: true
+task: match
+draw_keypoints: false
+draw_matches: true
 save_image: false
 save_path: ${work_dir}/log

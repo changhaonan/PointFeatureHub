@@ -25,7 +25,8 @@ print_config: True
 task: detect
 
 # visualize
-draw_keypoints: True
+draw_keypoints: False
+draw_matches: False
 save_image: False
 save_path: ${work_dir}/log
 
