@@ -119,7 +119,7 @@ class Matcher(ABC):
             scores1 (np.ndarray): scores of keypoints of image1.
             scores2 (np.ndarray): scores of keypoints of image2.
         Returns:
-            matches1to2 (np.ndarray): matches of keypoints. (-1 means no match).
+            matches (np.ndarray): matches of keypoints. (idx1, idx2).
             confidences (np.ndarray): confidences of matches.
             vis_image (np.ndarray): visualization image.
         """

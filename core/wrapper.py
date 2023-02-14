@@ -116,12 +116,12 @@ class SaveImageMatcherWrapper(MatcherWrapper):
 
     def match(self, image1, image2, xys1, xys2, desc1, desc2, score1, score2):
         # do match
-        matches1to2, confidence, vis_image = self.matcher.match(
+        matches, confidence, vis_image = self.matcher.match(
             image1, image2, xys1, xys2, desc1, desc2, score1, score2
         )
         # save image
         self.save(vis_image)
-        return matches1to2, confidence, vis_image
+        return matches, confidence, vis_image
 
     def save(self, image):
         # save image
@@ -148,12 +148,12 @@ class DrawKeyPointsMatcherWrapper(MatcherWrapper):
 
     def match(self, image1, image2, xys1, xys2, desc1, desc2, score1, score2):
         # detect keypoints/descriptors for a single image
-        matches1to2, confidence, _ = self.matcher.match(
+        matches, confidence, _ = self.matcher.match(
             image1, image2, xys1, xys2, desc1, desc2, score1, score2
         )
         # visualize image
-        vis_image = self.vis(image1, image2, xys1, xys2, matches1to2, confidence)
-        return matches1to2, confidence, vis_image
+        vis_image = self.vis(image1, image2, xys1, xys2, matches, confidence)
+        return matches, confidence, vis_image
 
     def vis(self, image1, image2, xys1, xys2, matches, confidence):
         image1_gray = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
