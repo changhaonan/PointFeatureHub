@@ -68,27 +68,32 @@ def launch_detector_hydra(cfg):
         matcher = create_matcher_thunk()
         # go over train list
         image_prev, xys_prev, desc_prev, scores_prev = None, None, None, None
-        for image_file in glob.glob(os.path.join(cfg.data_dir, cfg.train_dir, "*.png")):
-            image = cv2.imread(image_file)
+        for image_train_file in glob.glob(
+            os.path.join(cfg.data_dir, cfg.train_dir, "*.png")
+        ):
+            # get image name
+            image_name = os.path.basename(image_train_file)
+            image_query_file = os.path.join(cfg.data_dir, cfg.query_dir, image_name)
+
+            image_train = cv2.imread(image_train_file)
+            image_query = cv2.imread(image_query_file)
             if not matcher.detector_free:
-                xys, desc, scores, vis_image = detector.detect(image)
+                xys_train, desc_train, scores_train, _ = detector.detect(image_train)
+                xys_query, desc_query, scores_query, _ = detector.detect(image_query)
             else:
-                xys, desc, scores = None, None, None
-            if image_prev is not None:
-                matcher.match(
-                    image_prev,
-                    image,
-                    xys_prev,
-                    xys,
-                    desc_prev,
-                    desc,
-                    scores_prev,
-                    scores,
-                )
-            image_prev = image
-            xys_prev = xys
-            desc_prev = desc
-            scores_prev = scores
+                xys_train, desc_train, scores_train = None, None, None
+                xys_query, desc_query, scores_query = None, None, None
+
+            matcher.match(
+                image_query,
+                image_train,
+                xys_query,
+                xys_train,
+                desc_query,
+                desc_train,
+                scores_query,
+                scores_train,
+            )
 
 
 if __name__ == "__main__":

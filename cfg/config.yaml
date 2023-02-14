@@ -15,8 +15,8 @@ work_dir: ${hydra:runtime.cwd}
 
 # path to folder with data
 data_dir: ${work_dir}/data
-train_dir: test_0
-query_dir: test_0
+train_dir: image_train
+query_dir: image_query
 
 # pretty print config at the start of the run using Rich library
 print_config: True
