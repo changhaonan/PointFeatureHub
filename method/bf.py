@@ -28,5 +28,6 @@ class BFMatcher(Matcher):
         # match two sets of descriptors
         matches = self.matcher.match(desc1, desc2)
         matches = sorted(matches, key=lambda x: x.distance)
+        matched_idx = np.array([[m.queryIdx, m.trainIdx] for m in matches])
         confidence = np.array([m.distance for m in matches])
-        return np.array([[m.queryIdx, m.trainIdx] for m in matches]), confidence, None
+        return xys1[matched_idx[:, 0]], xys2[matched_idx[:, 1]], confidence, None

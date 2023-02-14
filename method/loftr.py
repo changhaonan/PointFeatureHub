@@ -63,4 +63,4 @@ class LoFTRMatcher(Matcher):
         xys1 = xys1[inliers]
         xys2 = xys2[inliers]
         # output of loftr is different from other matching algorithms
-        return xys1, xys2, None
+        return xys1, xys2, np.ones(xys1.shape[0]), None

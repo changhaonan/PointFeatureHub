@@ -116,12 +116,12 @@ class SaveImageMatcherWrapper(MatcherWrapper):
 
     def match(self, image1, image2, xys1, xys2, desc1, desc2, score1, score2):
         # do match
-        matches, confidence, vis_image = self.matcher.match(
+        xys1_matched, xys2_matched, confidence, vis_image = self.matcher.match(
             image1, image2, xys1, xys2, desc1, desc2, score1, score2
         )
         # save image
         self.save(vis_image)
-        return matches, confidence, vis_image
+        return xys1_matched, xys2_matched, confidence, vis_image
 
     def save(self, image):
         # save image
@@ -147,32 +147,27 @@ class DrawKeyPointsMatcherWrapper(MatcherWrapper):
         self.show = show
 
     def match(self, image1, image2, xys1, xys2, desc1, desc2, score1, score2):
-        if not self.detector_free:
-            # detector-based matching
-            matches, confidence, _ = self.matcher.match(
-                image1, image2, xys1, xys2, desc1, desc2, score1, score2
-            )
-        else:
-            # detector-free matching
-            xys1, xys2, _ = self.matcher.match(
-                image1, image2, xys1, xys2, desc1, desc2, score1, score2
-            )
-            assert xys1.shape == xys2.shape
-            matches = np.hstack([np.arange(xys1.shape[0])[:, None], np.arange(xys1.shape[0])[:, None]])
-            confidence = np.ones(len(xys1))
+        xys1_matched, xys2_matched, confidence, _ = self.matcher.match(
+            image1, image2, xys1, xys2, desc1, desc2, score1, score2
+        )
+        if self.detector_free:
+            xys1 = xys1_matched
+            xys2 = xys2_matched
         # visualize image
-        vis_image = self.vis(image1, image2, xys1, xys2, matches, confidence)
-        return matches, confidence, vis_image
+        vis_image = self.vis(image1, image2, xys1, xys2, xys1_matched, xys2_matched, confidence)
+        return xys1_matched, xys2_matched, confidence, vis_image
 
-    def vis(self, image1, image2, xys1, xys2, matches, confidence):
+    def vis(self, image1, image2, xys1, xys2, xys1_matched, xys2_matched, confidence):
         image1_gray = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
         image2_gray = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
-        xys_1_valid = xys1[matches[:, 0]]
-        xys_2_valid = xys2[matches[:, 1]]
-        color = cm.jet(confidence)
+        if np.std(confidence) < 1e-6:
+            color_green = np.array([0.0, 1.0, 0.0])[None, :]
+            color = np.repeat(color_green, confidence.shape[0], axis=0)
+        else:
+            color = cm.hot(confidence)
         text = [
             "Keypoints: {}:{}".format(len(xys1), len(xys2)),
-            "Matches: {}".format(len(xys_1_valid)),
+            "Matches: {}".format(len(xys1_matched)),
         ]
 
         # visualize matches
@@ -181,8 +176,8 @@ class DrawKeyPointsMatcherWrapper(MatcherWrapper):
             image2_gray,
             xys1[:, :2],
             xys2[:, :2],
-            xys_1_valid[:, :2],
-            xys_2_valid[:, :2],
+            xys1_matched[:, :2],
+            xys2_matched[:, :2],
             color,
             text,
             path=None,

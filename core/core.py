@@ -108,7 +108,7 @@ class Matcher(ABC):
     @abc.abstractmethod
     def match(
         self, image1, image2, xys1, xys2, desc1, desc2, score1, score2
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Match keypoints and descriptors from two images.
         Args:
             image1 (np.ndarray): image1 to be matched.
@@ -120,8 +120,9 @@ class Matcher(ABC):
             scores1 (np.ndarray): scores of keypoints of image1.
             scores2 (np.ndarray): scores of keypoints of image2.
         Returns:
-            matches (np.ndarray): matches of keypoints. (idx1, idx2).
-            confidences (np.ndarray): confidences of matches.
+            xys1_matched (np.ndarray): matched keypoints' coordinates and size of image1.
+            xys2_matched (np.ndarray): matched keypoints' coordinates and size of image2.
+            confid_matched (np.ndarray): confidence of the matches.
             vis_image (np.ndarray): visualization image.
         """
         raise NotImplementedError

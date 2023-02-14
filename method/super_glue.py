@@ -45,18 +45,14 @@ class SuperGlueMatcher(Matcher):
         image1_tensor = frame2tensor(image1_gray, self.device_str)
         image2_tensor = frame2tensor(image2_gray, self.device_str)
         query_data = {
-            "keypoints0": [torch.from_numpy(xys1[:,:2]).float().to(self.device_str)],
-            "descriptors0": [
-                torch.from_numpy(desc1.T).float().to(self.device_str)
-            ],
+            "keypoints0": [torch.from_numpy(xys1[:, :2]).float().to(self.device_str)],
+            "descriptors0": [torch.from_numpy(desc1.T).float().to(self.device_str)],
             "scores0": [torch.from_numpy(score1).float().to(self.device_str)],
             "image0": image1_tensor,
         }
         train_data = {
-            "keypoints1": [torch.from_numpy(xys2[:,:2]).float().to(self.device_str)],
-            "descriptors1": [
-                torch.from_numpy(desc2.T).float().to(self.device_str)
-            ],
+            "keypoints1": [torch.from_numpy(xys2[:, :2]).float().to(self.device_str)],
+            "descriptors1": [torch.from_numpy(desc2.T).float().to(self.device_str)],
             "scores1": [torch.from_numpy(score2).float().to(self.device_str)],
             "image1": image2_tensor,
         }
@@ -66,7 +62,8 @@ class SuperGlueMatcher(Matcher):
 
         # create valid matches, -1 means invalid
         valid = matches > 0
-        matches = [[i, m] for i, m in enumerate(matches) if m > 0]
+        matched_idx_list = [[i, m] for i, m in enumerate(matches) if m > 0]
+        matched_idx = np.array(matched_idx_list)
         confidence = confidence[valid]
-        
-        return np.array(matches), confidence, None
+
+        return xys1[matched_idx[:, 0]], xys2[matched_idx[:, 1]], confidence, None
