@@ -5,8 +5,6 @@ import numpy as np
 # add import path
 import sys
 import cv2
-
-sys.path.append("../")
 from core.core import Detector
 
 from pathlib import Path
@@ -14,12 +12,7 @@ from tqdm import tqdm
 import matplotlib.cm as cm
 import torch
 from third_party.matching import Matching
-from third_party.utils import (
-    AverageTimer,
-    VideoStreamer,
-    make_matching_plot_fast,
-    frame2tensor,
-)
+from third_party.utils import frame2tensor
 
 torch.set_grad_enabled(False)
 

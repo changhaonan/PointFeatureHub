@@ -4,6 +4,7 @@ from .r2d2 import R2D2Detector
 from .orb import ORB2Detector
 
 from .bf import BFMatcher
+from .super_glue import SuperGlueMatcher
 
 detector_map = {
     "sift": SIFTDetector,
@@ -14,4 +15,5 @@ detector_map = {
 
 matcher_map = {
     "bf": BFMatcher,
+    "super_glue": SuperGlueMatcher,
 }
