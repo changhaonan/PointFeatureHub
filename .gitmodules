@@ -1,6 +1,3 @@
-[submodule "external/super_point"]
-	path = external/super_point
-	url = git@github.com:YuqiuGan/SuperGluePretrainedNetwork.git
 [submodule "external/r2d2"]
 	path = external/r2d2
 	url = git@github.com:changhaonan/r2d2.git
