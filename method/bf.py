@@ -2,11 +2,6 @@ import numpy as np
 import cv2
 from tqdm import tqdm
 import numpy as np
-
-# add import path
-import sys
-
-sys.path.append("../")
 from core.core import Matcher
 
 

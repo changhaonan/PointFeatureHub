@@ -147,10 +147,19 @@ class DrawKeyPointsMatcherWrapper(MatcherWrapper):
         self.show = show
 
     def match(self, image1, image2, xys1, xys2, desc1, desc2, score1, score2):
-        # detect keypoints/descriptors for a single image
-        matches, confidence, _ = self.matcher.match(
-            image1, image2, xys1, xys2, desc1, desc2, score1, score2
-        )
+        if not self.detector_free:
+            # detector-based matching
+            matches, confidence, _ = self.matcher.match(
+                image1, image2, xys1, xys2, desc1, desc2, score1, score2
+            )
+        else:
+            # detector-free matching
+            xys1, xys2, _ = self.matcher.match(
+                image1, image2, xys1, xys2, desc1, desc2, score1, score2
+            )
+            assert xys1.shape == xys2.shape
+            matches = np.hstack([np.arange(xys1.shape[0])[:, None], np.arange(xys1.shape[0])[:, None]])
+            confidence = np.ones(len(xys1))
         # visualize image
         vis_image = self.vis(image1, image2, xys1, xys2, matches, confidence)
         return matches, confidence, vis_image

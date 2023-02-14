@@ -14,6 +14,12 @@ from core.wrapper import (
 @hydra.main(config_path="cfg", config_name="config")
 def launch_detector_hydra(cfg):
     def create_detector_thunk(**kwargs):
+        if cfg.detector not in detector_map:
+            raise ValueError(
+                "Detector {} not supported. Supported detectors are: {}".format(
+                    cfg.detector, detector_map.keys()
+                )
+            )
         detector = detector_map[cfg.detector](cfg, cfg.device, **kwargs)
         if cfg.draw_keypoints:
             window_name = f"{cfg.task}:{cfg.detector}"
@@ -30,6 +36,12 @@ def launch_detector_hydra(cfg):
         return detector
 
     def create_matcher_thunk(**kwargs):
+        if cfg.matcher not in matcher_map:
+            raise ValueError(
+                "Matcher {} not supported. Supported matchers are: {}".format(
+                    cfg.matcher, matcher_map.keys()
+                )
+            )
         matcher = matcher_map[cfg.matcher](cfg, cfg.device, **kwargs)
         if cfg.draw_matches:
             window_name = f"{cfg.task}:{cfg.detector}+{cfg.matcher}"
@@ -50,18 +62,18 @@ def launch_detector_hydra(cfg):
         # go over train list
         for image_file in glob.glob(os.path.join(cfg.data_dir, cfg.train_dir, "*.png")):
             image = cv2.imread(image_file)
-            xys, desc, scores, vis_image = detector.detect(image)
+            detector.detect(image)
     elif cfg.task == "match":
         detector = create_detector_thunk()
         matcher = create_matcher_thunk()
         # go over train list
-        image_prev = None
-        xys_prev = None
-        desc_prev = None
-        scores_prev = None
+        image_prev, xys_prev, desc_prev, scores_prev = None, None, None, None
         for image_file in glob.glob(os.path.join(cfg.data_dir, cfg.train_dir, "*.png")):
             image = cv2.imread(image_file)
-            xys, desc, scores, vis_image = detector.detect(image)
+            if not matcher.detector_free:
+                xys, desc, scores, vis_image = detector.detect(image)
+            else:
+                xys, desc, scores = None, None, None
             if image_prev is not None:
                 matcher.match(
                     image_prev,

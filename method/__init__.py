@@ -5,6 +5,7 @@ from .orb import ORB2Detector
 
 from .bf import BFMatcher
 from .super_glue import SuperGlueMatcher
+from .loftr import LoFTRMatcher
 
 detector_map = {
     "sift": SIFTDetector,
@@ -16,4 +17,5 @@ detector_map = {
 matcher_map = {
     "bf": BFMatcher,
     "super_glue": SuperGlueMatcher,
+    "loftr": LoFTRMatcher,
 }

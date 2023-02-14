@@ -103,6 +103,7 @@ class Matcher(ABC):
     dim_feature = None  # dimension of the feature
     max_feature = None  # maximum number of features in an image
     thresh_confid = None  # threshold of the feature confidence
+    detector_free = False  # whether the matcher is detector-free
 
     @abc.abstractmethod
     def match(
@@ -184,6 +185,14 @@ class MatcherWrapper(Matcher):
         return self.matcher.match(
             image1, image2, xys1, xys2, desc1, desc2, score1, score2
         )
+
+    @property
+    def detector_free(self):
+        return self.matcher.detector_free
+
+    @detector_free.setter
+    def detector_free(self, value):
+        self.matcher.detector_free = value
 
     @property
     def unwrapped(self):
